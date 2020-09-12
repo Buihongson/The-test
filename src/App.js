@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Header from "./components/Header";
+import NotFound from "./components/NotFound";
+import ServerError from "./components/ServerError";
+
+const Home = lazy(() => import("./features/Home/pages/Main"));
+const Blog = lazy(() => import("./features/Blog"));
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Suspense fallback={<div>Loading ...</div>}>
+        <BrowserRouter>
+          <Header />
+
+          <Switch>
+            {/* <Redirect exact from="/" to="/blogs" /> */}
+            <Route exact path="/" component={Home} />
+            <Route path="/blogs" component={Blog} />
+
+            <Route path='/404' component={NotFound} />
+            <Route path='/500' component={ServerError} />
+            <Redirect from='*' to='/404' />
+          </Switch>
+        </BrowserRouter>
+      </Suspense>
     </div>
   );
 }
